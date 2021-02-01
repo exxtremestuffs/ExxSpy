@@ -52,18 +52,60 @@ function Package.unionCheckTypeIs(dictionary: {string: any})
     return true, ""
 end
 
-function Package.newClass(constructor: function | nil, public: table | nil, private: table | nil, publicStatic: table | nil, privateStatic: table | nil)
+function Package.newClass(name: string, t: {string: any}, constructor: function | nil)
     assert(Package.unionCheckTypeOf({
-        [constructor] = "function | nil",
-        [public] = "table | nil",
-        [private] = "table | nil",
-        [publicStatic] = "table | nil",
-        [privateStatic] = "table | nil"
+        [name] = "string",
+        [t] = "table",
+        [constructor] = "function | nil"
     }))
+    t.__index = t
+    if type(t.init) == "function" then
+        local c = {}
+        c.new = function(...)
+            local o = {}
+            t.__tostring = function()
+                return name .. tostring(t):match(":.+")
+            end
+            setmetatable(o, t)
+            o:init(...)
+            return o
+        end
+        c.__index = c
+        local class = {}
+        c.__tostring = function()
+            return name .. tostring(c):match(":.+")
+        end
+        setmetatable(class, c)
+        return class
+    else
+        local class = {}
+        t.__tostring = function()
+            return name .. tostring(t):match(":.+")
+        end
+        setmetatable(class, t)
+        return class
+    end
 end
 
-function Package.extend()
-
+function Package.extend(child: {string: any}, parent: {string: any})
+    local oldindex
+    if getmetatable(parent) then
+        oldindex = getmetatable(parent).__index
+    end
+    local mt = {
+        __index = function(t, k)
+            if parent[k] then
+                return parent[k]
+            end
+            if type(oldindex) == "function" then
+                return oldindex(t, k)
+            elseif type(oldindex) == "table" then
+                return oldindex[k]
+            end
+        end
+    }
+    setmetatable(child, mt)
+    return child
 end
 
 getgenv().Package = Package
