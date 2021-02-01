@@ -45,14 +45,8 @@ function CompatibilityLayer.setClipboard(ascii: string)
             local closeEvent = Instance.new("BindableEvent")
 
             UserInputService.InputBegan:Connect(function(input: InputObject)
-                if UserInputService:GetPlatform() == Enum.Platform.Windows and input.KeyCode == Enum.KeyCode.C and (UserInputService:IsKeyDown(Enum.KeyCode.LeftControl) or UserInputService:IsKeyDown(Enum.KeyCode.RightControl)) then
+                if input.KeyCode == Enum.KeyCode.C and (UserInputService:IsKeyDown(Enum.KeyCode.LeftControl) or UserInputService:IsKeyDown(Enum.KeyCode.RightControl) or UserInputService:IsKeyDown(Enum.KeyCode.LeftSuper) or UserInputService:IsKeyDown(Enum.KeyCode.RightSuper)) then
                     RunService.RenderStepped:Wait()
-                    closeEvent:Fire()
-                elseif UserInputService:GetPlatform() == Enum.Platform.OSX and input.KeyCode == Enum.KeyCode.C and (UserInputService:IsKeyDown(Enum.KeyCode.LeftSuper) or UserInputService:IsKeyDown(Enum.KeyCode.RightSuper)) then
-                    RunService.RenderStepped:Wait()
-                    closeEvent:Fire()
-                else
-                    StarterGui:SetCore("SendNotification", { Title = "COMPATIBILITY LAYER NOTIFICATION", Text = "Unable to detect platform- this compatibility layer only supports Windows and OSX" })
                     closeEvent:Fire()
                 end
             end)
