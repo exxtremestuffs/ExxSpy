@@ -1,3 +1,7 @@
+--[[
+    COMPATIBILITYLAYER - A CROSS-EXPLOIT COMPATIBILITY LAYER
+]]
+
 local StarterGui = game:GetService("StarterGui")
 local CoreGui = game:GetService("CoreGui")
 local UserInputService = game:GetService("UserInputService")
