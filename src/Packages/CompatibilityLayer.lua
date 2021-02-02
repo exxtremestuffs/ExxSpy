@@ -63,6 +63,7 @@ function CompatibilityLayer.setClipboard(ascii: string)
 end
 
 function CompatibilityLayer.protectGui(gui: ScreenGui)
+    assert(Package.checkTypeIs(gui, "ScreenGui"))
     if syn and syn.protect_gui then
         syn.protect_gui(gui)
         gui.Parent = CoreGui
