@@ -52,38 +52,38 @@ function Package.unionCheckTypeIs(dictionary: {string: any})
     return true, ""
 end
 
-function Package.newClass(name: string, t: {string: any}, constructor: function | nil)
+function Package.newClass(name: string, class: {string: any}, constructor: function | nil)
     assert(Package.unionCheckTypeOf({
         [name] = "string",
-        [t] = "table",
+        [class] = "table",
         [constructor] = "function | nil"
     }))
-    t.__index = t
-    if type(t.init) == "function" then
+    class.__index = class
+    if type(class.init) == "function" then
         local c = {}
         c.new = function(...)
-            local o = {}
-            t.__tostring = function()
-                return name .. tostring(t):match(":.+")
+            local object = {}
+            class.__tostring = function()
+                return name .. tostring(class):match(":.+")
             end
-            setmetatable(o, t)
-            o:init(...)
-            return o
+            setmetatable(object, class)
+            constructor(object, ...)
+            return object
         end
         c.__index = c
-        local class = {}
+        local namespace = {}
         c.__tostring = function()
             return name .. tostring(c):match(":.+")
         end
-        setmetatable(class, c)
-        return class
+        setmetatable(namespace, c)
+        return namespace
     else
-        local class = {}
-        t.__tostring = function()
-            return name .. tostring(t):match(":.+")
+        local namespace = {}
+        class.__tostring = function()
+            return name .. tostring(class):match(":.+")
         end
-        setmetatable(class, t)
-        return class
+        setmetatable(namespace, class)
+        return namespace
     end
 end
 
